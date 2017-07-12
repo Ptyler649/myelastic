@@ -1,0 +1,13 @@
+sudo apt-get update
+go to elastic search download page and copy the link address from DEV
+then do a wget on this copied address
+then dpkg -i elastic-1.11.db or related that has been downloaded
+installed in /usr/share/elasticsearch
+go to bin and elasticsearch is here
+then run by doing ./elasticsearch
+then on you can use postman or curl to do a http://localhost:9200
+to test this
+note: the configuration files are in /etc/elasticsearch
+in the yml files
+
+
