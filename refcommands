@@ -1,0 +1,51 @@
+check elastic is running
+curl http://localhost:9200/
+
+check the cluster health
+curl -XGET http://localhost:9200/_cluster/health?pretty
+
+understand the cluster state better, if this is in a red(dead) state
+the resulting fields mean the below -
+1st field = index name
+2nd field = shard number
+3rd field = p/r for primary or replica shard
+4th field = is the shard state, initialzing / unassigned for example
+curl -XGET http://localhost:9200/_cat/shards
+
+list the current nodes
+curl -XGET http://localhost:9200/_cat/nodes?pretty
+
+list all the available indexes
+curl http://localhost:9200/_cat/indices?v
+
+creates and index
+curl -XPUT 'http://localhost:9200/talendnew/' -d '{"settings":{"index":{"number_of_shards":3, "number_of_replicas":2}}}'
+
+deletes and index
+curl -XDELETE 'http://localhost:9200/talendnew?pretty'
+
+insert a document 
+curl -XPOST 'http://locat/joblogs' -d '{"JOBNAME":"dw_email_test5"}'
+
+query samples
+curl 'http://localhost:9200/talendtest/joblogs/_search?pretty=true&q=*:*'
+curl -XGET 'http://localhost:9200/talendtest/joblogs/_search?pretty=true&q=*:*'
+curl -XGET 'http://localhost:9200/talendtest/joblogs/_search?pretty' -d '{"query":{"match_all":{}}}'
+curl -XGET 'http://localhost:9200/talendtest/joblogs/_search?pretty' -d '{"query":{"match":{"JOBNAME":"dw_email_test5"}}}'
+
+
+to fix unassigned shards causing a RED Status on the cluster, first use cat shards
+statement above with grep on UNASSIGNED to show issues and then run the below for each
+of the indexes showing a problem. pos bash script to run this in an auto fashion.
+curl -XPOST 'localhost:9200/_cluster/reroute' -d '{"commands":[{"allocate":{"index":"nameofindexwithissue", "shard":4, "node":"nameofnodetoroutetoo", "allow_primary":true}}]}'
+
+
+
+
+
+
+
+
+
+
+
